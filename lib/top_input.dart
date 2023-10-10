@@ -1,12 +1,13 @@
 import 'dart:convert';
-
 import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter/material.dart';
+
 
 class TopInput extends StatefulWidget {
   const TopInput({required this.onUpdate, super.key});
 
   final ValueChanged<String> onUpdate;
+
   @override
   State<TopInput> createState() => _TopInput();
 }
@@ -16,11 +17,18 @@ class _TopInput extends State<TopInput> {
   var runState = false;
 
   void setPing(bool state) {
+    var ping = Ping(
+      textInput.text,
+      encoding: const Utf8Codec(allowMalformed: true),
+      forceCodepage: true,
+    );
     setState(() {
       runState = !runState;
+      if (!runState) {
+        ping.stop();
+        return;
+      }
     });
-    final ping =
-        Ping(textInput.text, encoding: const Utf8Codec(allowMalformed: true));
     ping.stream.listen((event) {
       if (!runState) {
         ping.stop();
@@ -68,8 +76,9 @@ class _TopInput extends State<TopInput> {
                   onPressed: () {
                     setPing(true);
                   },
-                  child: const Text("Run")),
-        )
+                  child: const Text("Run"),
+                ),
+        ),
       ],
     );
   }
